@@ -39,16 +39,31 @@ let keys = {};
 //Mario's coordinate
 let marioX = 100;
 let marioY = 100;
+let marioVectorX = 0;
+let marioVectorY;
 
 //Update images
 function update () {
+
+    //If "←" is pressed and the vector is not small enough
     if ( keys.Left ) {
-        marioX--;
-    }
-    if ( keys.Right ) {
-        marioX++;
+        if ( -2 < marioVectorX ) { 
+            marioVectorX -= .1;
+        }
+    
+    //If "→" is pressed and the vector is not big enough
+    } else if ( keys.Right ) {
+        if ( marioVectorX < 2 ) { 
+            marioVectorX += .1;
+        }
+
+    //If any key isn't pressed, the vector will be reset slowly
+    } else {
+        if ( 0 < marioVectorX ) { marioVectorX -= .1; } 
+        if ( marioVectorX < 0 ) { marioVectorX += .1; }
     }
 
+    marioX += marioVectorX;
 }
 
 //Draw characters
