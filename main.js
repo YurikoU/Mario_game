@@ -2,8 +2,8 @@
 const GAME_FPS = 1000/60; //FPS
 
 //Screen size
-const SCREEN_SIZE_W = 256;
-const SCREEN_SIZE_H = 224;
+const SCREEN_SIZE_W  = 256;
+const SCREEN_SIZE_H  = 224;
 
 //Canvas settings (on HTML)
 let canvas           = document.getElementById("can");
@@ -37,34 +37,79 @@ characterImage.onload = draw;
 let keys = {};
 
 //Mario's coordinate
-let marioX = 100;
-let marioY = 100;
-let marioVectorX = 0;
-let marioVectorY;
+let marioX          = 100<<4;
+let marioY          = 100<<4;
+let marioVectorX    = 0;
+// let marioVectorY;
+let marioAnime      =  0;
+let marioSpriteNum  = 48;
+let marioACount     =  0;
+let marioDirection  =  0;
 
 //Update images
 function update () {
 
     //If "←" is pressed and the vector is not small enough
     if ( keys.Left ) {
-        if ( -2 < marioVectorX ) { 
-            marioVectorX -= .1;
-        }
-    
-    //If "→" is pressed and the vector is not big enough
+        if ( marioAnime == 0 ) { marioACount = 0; }
+        marioAnime = 1;//While walking
+        marioDirection = 1;//Looking at the left side
+        if ( -32 < marioVectorX ) { marioVectorX -= 1; }
+        if ( 0 < marioVectorX ) { marioVectorX -= 1; } 
+        if ( 8 < marioVectorX ) { marioAnime = 2; }
+        
+        //If "→" is pressed and the vector is not big enough
     } else if ( keys.Right ) {
-        if ( marioVectorX < 2 ) { 
-            marioVectorX += .1;
-        }
+        if ( marioAnime == 0 ) { marioACount = 0; }
+        marioAnime = 1;//While walking
+        marioDirection = 0;//Looking at the right side
+        if ( marioVectorX < 32 ) { marioVectorX += 1; }
+        if ( marioVectorX < 0 ) { marioVectorX += 1; }
+        if ( marioVectorX < 8 ) { marioAnime = 2; }
 
     //If any key isn't pressed, the vector will be reset slowly
     } else {
-        if ( 0 < marioVectorX ) { marioVectorX -= .1; } 
-        if ( marioVectorX < 0 ) { marioVectorX += .1; }
+        if ( 0 < marioVectorX ) { marioVectorX -= 1; } 
+        if ( marioVectorX < 0 ) { marioVectorX += 1; }
+        if ( !marioVectorX ) { marioAnime = 0; }//If the vector is 0, the character stops
+    }
+
+    marioACount++;
+    if ( Math.abs(marioVectorX) == 32 ) { marioACount++; }
+
+    //While stopping
+    if ( marioAnime == 0 ) {
+        marioSpriteNum = 0;
+
+    //While walking
+    } else if ( marioAnime == 1 ) {
+        marioSpriteNum = 2 + ((marioACount/8) % 3);
+
+    //When stop suddenly
+    } else if ( marioAnime == 2 ) {
+        marioSpriteNum = 5;
+    }
+
+    //Looking at the left side
+    if ( marioDirection ) {
+        marioSpriteNum += 48;
     }
 
     marioX += marioVectorX;
 }
+
+
+function drawSprite ( sNum, x, y ) {
+
+    let spriteX = (sNum % 16) * 16;
+    let spriteY = (sNum>>4) * 16;
+    virtualCtx.drawImage( 
+        characterImage,  
+        spriteX, spriteY, 16, 32,  //Where to pick the character image up from the source
+        x, y, 16, 32//Where to draw the image on the virtual context
+    );    
+}
+
 
 //Draw characters
 function draw () {
@@ -73,11 +118,7 @@ function draw () {
     virtualCtx.fillRect( 0, 0, SCREEN_SIZE_W, SCREEN_SIZE_H );
 
     //Character on the virtual context
-    virtualCtx.drawImage( 
-        characterImage,  
-        0,0,16,32,  //Where to pick the character image up from the source
-        marioX,marioY,16,32//Where to draw the image on the virtual context
-    );
+    drawSprite( marioSpriteNum, marioX>>4, marioY>>4 );
 
     //Debug information on the virtual context
     virtualCtx.font = "24px 'Impact'";
