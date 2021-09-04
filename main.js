@@ -83,7 +83,7 @@ function update () {
 
     //While walking
     } else if ( marioAnime == 1 ) {
-        marioSpriteNum = 2 + ((marioACount/8) % 3);
+        marioSpriteNum = 2 + ((marioACount/6) % 3);
 
     //When stop suddenly
     } else if ( marioAnime == 2 ) {
@@ -101,7 +101,7 @@ function update () {
 
 function drawSprite ( sNum, x, y ) {
 
-    let spriteX = (sNum % 16) * 16;
+    let spriteX = (sNum&15) * 16;
     let spriteY = (sNum>>4) * 16;
     virtualCtx.drawImage( 
         characterImage,  
