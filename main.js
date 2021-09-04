@@ -39,55 +39,90 @@ let keys = {};
 //Mario's coordinate
 let marioX          = 100<<4;
 let marioY          = 100<<4;
-let marioVectorX    = 0;
-// let marioVectorY;
+let marioVectorX    =  0;
+let marioVectorY    =  0;
 let marioAnime      =  0;
 let marioSpriteNum  = 48;
-let marioACount     =  0;
+let marioAnimeCount =  0;
 let marioDirection  =  0;
+let marioJump       =  0;
+
+const ANIME_JUMP    = 3;
+
 
 //Update images
 function update () {
+    
+    //Counter for animation =============================================
+    marioAnimeCount++;
+    if ( Math.abs(marioVectorX) == 32 ) { marioAnimeCount++; }
 
+    //Vertical movement =================================================
+    if ( keys.Up ) {
+        //Jump up only when the character doesn't jump
+        if ( marioJump == 0 ) {
+            marioAnime = ANIME_JUMP;
+            marioJump = 1;
+            marioVectorY = -32;
+        } 
+    }
+
+
+    //Add gravity ------------------------------------------------
+    if ( marioVectorY < 64 ) {
+        marioVectorY += 2;
+    }
+    
+    //Land the ground --------------------------------------------
+    if ( (150<<4) < marioY ) {
+        marioJump = 0;
+        marioVectorY = 0;
+        marioY = 150<<4;
+    }
+
+
+    //Horizontal movement ===============================================
     //If "←" is pressed and the vector is not small enough
     if ( keys.Left ) {
-        if ( marioAnime == 0 ) { marioACount = 0; }
-        marioAnime = 1;//While walking
+        if ( marioAnime == 0 ) { marioAnimeCount = 0; }
+        if ( !marioJump ) { marioAnime = 1; }//While walking
         marioDirection = 1;//Looking at the left side
         if ( -32 < marioVectorX ) { marioVectorX -= 1; }
         if ( 0 < marioVectorX ) { marioVectorX -= 1; } 
-        if ( 8 < marioVectorX ) { marioAnime = 2; }
+        if ( !marioJump && 8 < marioVectorX ) { marioAnime = 2; }
         
         //If "→" is pressed and the vector is not big enough
     } else if ( keys.Right ) {
-        if ( marioAnime == 0 ) { marioACount = 0; }
-        marioAnime = 1;//While walking
+        if ( marioAnime == 0 ) { marioAnimeCount = 0; }
+        if ( !marioJump ) { marioAnime = 1; }//While walking
         marioDirection = 0;//Looking at the right side
         if ( marioVectorX < 32 ) { marioVectorX += 1; }
         if ( marioVectorX < 0 ) { marioVectorX += 1; }
-        if ( marioVectorX < 8 ) { marioAnime = 2; }
+        if ( !marioJump && marioVectorX < -8 ) { marioAnime = 2; }
 
-    //If any key isn't pressed, the vector will be reset slowly
+    //If "←" or "→" isn't pressed, the vector will be reset slowly
     } else {
         if ( 0 < marioVectorX ) { marioVectorX -= 1; } 
         if ( marioVectorX < 0 ) { marioVectorX += 1; }
-        if ( !marioVectorX ) { marioAnime = 0; }//If the vector is 0, the character stops
+        if ( !marioJump && !marioVectorX ) { marioAnime = 0; }//If the vector is 0, the character stops
     }
 
-    marioACount++;
-    if ( Math.abs(marioVectorX) == 32 ) { marioACount++; }
-
+    //Determine the proper sprite --------------------------------
     //While stopping
     if ( marioAnime == 0 ) {
         marioSpriteNum = 0;
 
     //While walking
     } else if ( marioAnime == 1 ) {
-        marioSpriteNum = 2 + ((marioACount/6) % 3);
+        marioSpriteNum = 2 + ((marioAnimeCount/6) % 3);
 
     //When stop suddenly
     } else if ( marioAnime == 2 ) {
         marioSpriteNum = 5;
+    
+    //While jumping
+    } else if ( marioAnime == ANIME_JUMP ) {
+        marioSpriteNum = 6;
     }
 
     //Looking at the left side
@@ -95,12 +130,13 @@ function update () {
         marioSpriteNum += 48;
     }
 
+    //Set the expected coordinate on the X-axis and the Y-axis ==========
     marioX += marioVectorX;
+    marioY += marioVectorY;
 }
 
 
 function drawSprite ( sNum, x, y ) {
-
     let spriteX = (sNum&15) * 16;
     let spriteY = (sNum>>4) * 16;
     virtualCtx.drawImage( 
@@ -165,12 +201,8 @@ function mainLoop () {
 document.onkeydown = function ( e ) {
     if ( e.code == 'ArrowLeft' ) { keys.Left = true; }
     if ( e.code == 'ArrowRight' ) { keys.Right = true; }
-    // if ( e.code == 'ArrowUp' ) {
-    //     keys.Up = true;
-    // }
-    // if ( e.code == 'ArrowDown' ) {
-    //     keys.Down = true;
-    // }
+    if ( e.code == 'ArrowUp' ) { keys.Up = true; }
+    if ( e.code == 'ArrowDown' ) { keys.Down = true; }
 }
 
 
@@ -178,11 +210,6 @@ document.onkeydown = function ( e ) {
 document.onkeyup = function ( e ) {
     if ( e.code == 'ArrowLeft' ) { keys.Left = false; }
     if ( e.code == 'ArrowRight' ) { keys.Right = false; }
-    // if ( e.code == 'ArrowUp' ) {
-    //     keys.Up = false;
-    // }
-    // if ( e.code == 'ArrowDown' ) {
-    //     keys.Down = false;
-    // }
+    if ( e.code == 'ArrowUp' ) { keys.Up = false; }
+    if ( e.code == 'ArrowDown' ) { keys.Down = false; }
 }
-
