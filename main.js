@@ -48,6 +48,7 @@ let marioDirection  =  0;
 let marioJump       =  0;
 
 const ANIME_JUMP    = 3;
+const GRAVITY       = 4;
 
 
 //Update images
@@ -63,18 +64,23 @@ function update () {
         if ( marioJump == 0 ) {
             marioAnime = ANIME_JUMP;
             marioJump = 1;
-            marioVectorY = -32;
         } 
+        
+        if ( marioJump < 15 ) {
+            marioVectorY = -(64-marioJump*2);
+        }
+    }
+    if ( marioJump ) {
+        marioJump++;
     }
 
 
     //Add gravity ------------------------------------------------
-    if ( marioVectorY < 64 ) {
-        marioVectorY += 2;
-    }
+    if ( marioVectorY < 64 ) { marioVectorY += GRAVITY; }
     
     //Land the ground --------------------------------------------
     if ( (150<<4) < marioY ) {
+        if ( marioAnime == ANIME_JUMP ) { marioAnime = 1; }
         marioJump = 0;
         marioVectorY = 0;
         marioY = 150<<4;
@@ -85,8 +91,10 @@ function update () {
     //If "←" is pressed and the vector is not small enough
     if ( keys.Left ) {
         if ( marioAnime == 0 ) { marioAnimeCount = 0; }
-        if ( !marioJump ) { marioAnime = 1; }//While walking
-        marioDirection = 1;//Looking at the left side
+        if ( !marioJump ) { 
+            marioAnime = 1; //While walking
+            marioDirection = 1;//Looking at the left side
+        }
         if ( -32 < marioVectorX ) { marioVectorX -= 1; }
         if ( 0 < marioVectorX ) { marioVectorX -= 1; } 
         if ( !marioJump && 8 < marioVectorX ) { marioAnime = 2; }
@@ -94,17 +102,21 @@ function update () {
         //If "→" is pressed and the vector is not big enough
     } else if ( keys.Right ) {
         if ( marioAnime == 0 ) { marioAnimeCount = 0; }
-        if ( !marioJump ) { marioAnime = 1; }//While walking
-        marioDirection = 0;//Looking at the right side
+        if ( !marioJump ) { 
+            marioAnime = 1; //While walking
+            marioDirection = 0;//Looking at the right side
+        }
         if ( marioVectorX < 32 ) { marioVectorX += 1; }
         if ( marioVectorX < 0 ) { marioVectorX += 1; }
         if ( !marioJump && marioVectorX < -8 ) { marioAnime = 2; }
 
     //If "←" or "→" isn't pressed, the vector will be reset slowly
     } else {
-        if ( 0 < marioVectorX ) { marioVectorX -= 1; } 
-        if ( marioVectorX < 0 ) { marioVectorX += 1; }
-        if ( !marioJump && !marioVectorX ) { marioAnime = 0; }//If the vector is 0, the character stops
+        if ( !marioJump ) {
+            if ( 0 < marioVectorX ) { marioVectorX -= 1; } 
+            if ( marioVectorX < 0 ) { marioVectorX += 1; }
+            if ( !marioJump && !marioVectorX ) { marioAnime = 0; }//If the vector is 0, the character stops
+        }
     }
 
     //Determine the proper sprite --------------------------------
