@@ -1,10 +1,3 @@
-//Game FPS
-const GAME_FPS = 1000/60; //FPS
-
-//Screen size
-const SCREEN_SIZE_W  = 256;
-const SCREEN_SIZE_H  = 224;
-
 //Canvas settings (on HTML)
 let canvas           = document.getElementById("can");
 let ctx              = canvas.getContext("2d");
@@ -36,12 +29,15 @@ characterImage.onload = draw;
 //Store if the keys are pressed
 let keys = {};
 
-//Instantiate Mario() class
+//Instantiate classes
 let marioObj = new Mario( 100, 100 );
+let fieldObj = new Field();
 
 
 //Update images
 function update () {
+    //Perform update() function of the objects
+    fieldObj.update();
     marioObj.update();
 }
 
@@ -63,8 +59,9 @@ function draw () {
     virtualCtx.fillStyle = "#66AAFF";
     virtualCtx.fillRect( 0, 0, SCREEN_SIZE_W, SCREEN_SIZE_H );
 
-    //Character on the virtual context
-    marioObj.draw();
+    //Draw images on the virtual context
+    fieldObj.draw();//The field
+    marioObj.draw();//The character
 
     //Debug information on the virtual context
     virtualCtx.font = "24px 'Impact'";

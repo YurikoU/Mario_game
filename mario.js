@@ -70,8 +70,8 @@ class Mario {
         //If "←" is pressed and the vector is not small enough
         if ( keys.Left ) {
             this.updateWalkSub( 1 );
-      
-        //If "→" is pressed and the vector is not big enough
+
+            //If "→" is pressed and the vector is not big enough
         } else if ( keys.Right ) {
             this.updateWalkSub( 0 );
 
@@ -126,13 +126,13 @@ class Mario {
         this.y += this.vy;
         
         //Land the ground
-        if ( (150<<4) < this.y ) {
+        if ( (160<<4) < this.y ) {
             if ( this.animeNum == ANIME_JUMP ) { this.animeNum = ANIME_WALK; }
             this.jump = 0;
             this.vy   = 0;
-            this.y    = 150<<4;
+            this.y    = 160<<4;
         }
-    }
+    } 
 
     //Draw by every frame
     draw () {
