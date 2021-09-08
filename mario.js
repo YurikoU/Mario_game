@@ -83,7 +83,7 @@ class Mario {
                 this.animeNum = ANIME_JUMP;
                 this.jump     = 1;
             } 
-            if ( this.jump < 15 ) { this.vy = -( 64 - this.jump * 2 ); }
+            if ( this.jump < 15 ) { this.vy = -( 64 - this.jump ); }
         }
 
         if ( this.jump ) { this.jump++; }
