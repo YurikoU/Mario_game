@@ -24,15 +24,52 @@ class Mario {
         //If the character is jumping upward, don't check
         if ( this.vy <= 0 ) { return; }
 
-        let lx = (this.x>>4);
+        let lx = ( (this.x+this.vx) >>4);
         let ly = ( (this.y+this.vy) >>4);
 
         //If the character land at least the either the right side or the left side of the ground
-        if ( fieldObj.isBlock(lx+14, ly+31)  ||  fieldObj.isBlock(lx+14, ly+31) ) {
+        if ( fieldObj.isBlock(lx+1, ly+31)  ||  fieldObj.isBlock(lx+14, ly+31) ) {
             if ( this.animeNum == ANIME_JUMP ) { this.animeNum = ANIME_WALK; }
             this.jump = 0;
             this.vy   = 0;
             this.y    = (ly-1)<<4;
+        }
+    }
+
+
+    //Check if the character touches the wall
+    checkWall () {
+        let lx = ( (this.x+this.vx) >>4);
+        let ly = ( (this.y+this.vy) >>4);
+
+        //If the character dumps the wall on the right side
+        if (fieldObj.isBlock(lx+15, ly+9 )  ||
+            fieldObj.isBlock(lx+15, ly+15)  || 
+            fieldObj.isBlock(lx+15, ly+24)) {
+            this.vx = 0;
+            this.x -= 8;
+
+        //If the character dumps the wall on the left side
+        } else if (fieldObj.isBlock(lx, ly+9 )  ||
+                fieldObj.isBlock(lx, ly+15)  || 
+                fieldObj.isBlock(lx, ly+24)) {
+            this.vx = 0;
+            this.x += 8;            
+        }
+    }
+
+    //Check if the character touches the ceiling
+    checkCeiling () {
+        //If the character is NOT jumping upward, don't check
+        if ( 0 <= this.vy ) { return; }
+
+        let lx = ( (this.x+this.vx) >>4);
+        let ly = ( (this.y+this.vy) >>4);
+
+        //If the character land at least the either the right side or the left side of the ground
+        if ( fieldObj.isBlock(lx+8, ly+5) ) {
+            this.jump = 15;
+            this.vy   = 0;
         }
     }
 
@@ -139,8 +176,14 @@ class Mario {
         //Add gravity
         if ( this.vy < 64 ) { this.vy += GRAVITY; }
 
-        //Check the ground
+        //Check if the character touch the wall
+        this.checkWall();
+
+        //Check where the character lands
         this.checkFloor();
+
+        //Check if the character touches the ceiling
+        this.checkCeiling();
 
         //Update to the expected coordinate
         this.x += this.vx;
