@@ -136,6 +136,9 @@ class Mario {
 
     //Draw by every frame
     draw () {
-        drawSprite( this.spriteNum, this.x>>4, this.y>>4 );
+        //The character won't move with the ground if it's scrolled 
+        let printX = (this.x>>4) - fieldObj.scrollX;
+        let printY = (this.y>>4) - fieldObj.scrollY;
+        drawSprite( this.spriteNum, printX, printY );
     }
 }

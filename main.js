@@ -110,6 +110,9 @@ document.onkeydown = function ( e ) {
     if ( e.code == 'ArrowRight' ) { keys.Right = true; }
     if ( e.code == 'ArrowUp' ) { keys.Up = true; }
     if ( e.code == 'ArrowDown' ) { keys.Down = true; }
+
+    if ( e.code == 'KeyA' ) { fieldObj.scrollX--; }
+    if ( e.code == 'KeyS' ) { fieldObj.scrollX++; }
 }
 
 
