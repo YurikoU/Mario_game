@@ -19,6 +19,24 @@ class Mario {
         this.jump       = 0;
     }
 
+    //Check where the character lands
+    checkFloor () {
+        //If the character is jumping upward, don't check
+        if ( this.vy <= 0 ) { return; }
+
+        let lx = (this.x>>4);
+        let ly = ( (this.y+this.vy) >>4);
+
+        //If the character land at least the either the right side or the left side of the ground
+        if ( fieldObj.isBlock(lx+14, ly+31)  ||  fieldObj.isBlock(lx+14, ly+31) ) {
+            if ( this.animeNum == ANIME_JUMP ) { this.animeNum = ANIME_WALK; }
+            this.jump = 0;
+            this.vy   = 0;
+            this.y    = (ly-1)<<4;
+        }
+    }
+
+
     //Details to jump
     updateJump () {
         //Vertical movement
@@ -121,17 +139,20 @@ class Mario {
         //Add gravity
         if ( this.vy < 64 ) { this.vy += GRAVITY; }
 
+        //Check the ground
+        this.checkFloor();
+
         //Update to the expected coordinate
         this.x += this.vx;
         this.y += this.vy;
-        
+
         //Land the ground
-        if ( (160<<4) < this.y ) {
-            if ( this.animeNum == ANIME_JUMP ) { this.animeNum = ANIME_WALK; }
-            this.jump = 0;
-            this.vy   = 0;
-            this.y    = 160<<4;
-        }
+        // if ( (160<<4) < this.y ) {
+        //     if ( this.animeNum == ANIME_JUMP ) { this.animeNum = ANIME_WALK; }
+        //     this.jump = 0;
+        //     this.vy   = 0;
+        //     this.y    = 160<<4;
+        // }
     } 
 
     //Draw by every frame

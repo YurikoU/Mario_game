@@ -18,10 +18,33 @@ let fieldData = [
 ];
 
 
+//Block type from No.368
+//0:can't land, 1:land
+let blockType = [
+    1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,
+    0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,
+    1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,
+    1,1,1,0,0,0,1,1,1,0,0,0,1,1,1,1,
+    0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,1,
+    0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,
+    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,
+    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
+];
+
+
 class Field {
     constructor () {
         this.scrollX = 0;
         this.scrollY = 0;
+    }
+
+    //Flag to return if it's a block or not
+    isBlock ( x, y ) {
+        let placeToLand = fieldData[ (y>>4) * FIELD_SIZE_W + (x>>4) ];
+        if ( placeToLand < 368 ) { return false; }
+
+        return blockType[ placeToLand-368 ] == 1;
     }
 
     //Update the field
