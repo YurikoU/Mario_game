@@ -42,9 +42,10 @@ class Field {
     //Flag to return if it's a block or not
     isBlock ( x, y ) {
         let placeToLand = fieldData[ (y>>4) * FIELD_SIZE_W + (x>>4) ];
-        if ( placeToLand < 368 ) { return false; }
+        if ( placeToLand < 368 ) { return 0; }
 
-        return blockType[ placeToLand-368 ] == 1;
+        //If blockType is 1, return placeToLand. Otherwise, return 0.
+        return blockType[ placeToLand-368 ]==1  ?  placeToLand  : 0;
     }
 
     //Update the field
@@ -57,6 +58,11 @@ class Field {
 
     //Draw a single block
     drawBlock ( block, x, y ) {
+        const animeToTwinkleBox = [0, 1, 2, 1, 0];
+        if ( block == 368 ) { 
+            block += animeToTwinkleBox[ (frameCount>>3) % 5 ]
+        }
+
         let spriteX = (block&15) * 16;
         let spriteY = (block>>4) * 16;
         virtualCtx.drawImage( 

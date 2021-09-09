@@ -24,8 +24,8 @@ class Mario {
         //If the character is jumping upward, don't check
         if ( this.vy <= 0 ) { return; }
 
-        let lx = ( (this.x+this.vx) >>4);
-        let ly = ( (this.y+this.vy) >>4);
+        let lx = ( this.x + this.vx ) >>4;
+        let ly = ( this.y + this.vy ) >>4;
 
         //If the character land at least the either the right side or the left side of the ground
         if ( fieldObj.isBlock(lx+1, ly+31)  ||  fieldObj.isBlock(lx+14, ly+31) ) {
@@ -66,10 +66,16 @@ class Mario {
         let lx = ( (this.x+this.vx) >>4);
         let ly = ( (this.y+this.vy) >>4);
 
-        //If the character land at least the either the right side or the left side of the ground
-        if ( fieldObj.isBlock(lx+8, ly+5) ) {
+        let block;
+
+        //Store the result of isBlock into block. 
+        //If block has something except 0
+        if ( block = fieldObj.isBlock(lx+8,ly+5) ) {
             this.jump = 15;
             this.vy   = 0;
+
+            //If the character'head touches something, then he shakes a bit
+            blockObj.push( new Block( block, (lx+8)>>4, (ly+5)>>4 ) );
         }
     }
 

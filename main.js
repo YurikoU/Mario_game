@@ -32,12 +32,19 @@ let keys = {};
 //Instantiate classes
 let marioObj = new Mario( 100, 100 );
 let fieldObj = new Field();
+let blockObj = [];
 
 
 //Update images
 function update () {
     //Perform update() function of the objects
     fieldObj.update();
+    for ( let i = (blockObj.length-1); 0 <= i; i-- ) { //Draw the sprite blocks
+        blockObj[ i ].update();
+        if ( blockObj[ i ].isKillingItself ) {
+            blockObj.splice( i, 1 );
+        }
+    }
     marioObj.update();
 }
 
@@ -61,6 +68,7 @@ function draw () {
 
     //Draw images on the virtual context
     fieldObj.draw();//The field
+    for ( let i = 0; i < blockObj.length; i++ ) { blockObj[ i ].draw(); }//Draw the sprite blocks
     marioObj.draw();//The character
 
     //Debug information on the virtual context
@@ -111,8 +119,11 @@ document.onkeydown = function ( e ) {
     if ( e.code == 'ArrowUp' ) { keys.Up = true; }
     if ( e.code == 'ArrowDown' ) { keys.Down = true; }
 
-    if ( e.code == 'KeyA' ) { fieldObj.scrollX--; }
-    if ( e.code == 'KeyS' ) { fieldObj.scrollX++; }
+    if ( e.code == 'KeyA' ) {
+        blockObj.push( new Block( 368, 5, 5 ) );
+    }
+    // if ( e.code == 'KeyA' ) { fieldObj.scrollX--; }
+    // if ( e.code == 'KeyS' ) { fieldObj.scrollX++; }
 }
 
 
